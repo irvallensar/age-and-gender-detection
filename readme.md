@@ -9,6 +9,10 @@ Real-time age and gender detection from a webcam feed, built with [DeepFace](htt
 - Multithreaded analysis (analysis runs off the main video loop to avoid blocking the feed)
 - Standalone accuracy evaluation script against a labeled dataset (UTKFace)
 
+## Video Demo
+
+[▶️ Watch the demo video](https://docs.google.com/file/d/1rXSH8MmUygn3Q2WhNYrfuaU3UNUWpsI-/view)
+
 ## Requirements
 
 - Python 3.8+
@@ -79,7 +83,3 @@ This project uses DeepFace's pretrained Age and Gender models (VGG16-based, DEX 
 
 - [DeepFace](https://github.com/serengil/deepface) by Sefik Ilkin Serengil
 - [UTKFace dataset](https://susanqq.github.io/UTKFace/)
-
-**Video Demo**
-
-[▶️ Watch the demo video](https://docs.google.com/file/d/1rXSH8MmUygn3Q2WhNYrfuaU3UNUWpsI-/view)
