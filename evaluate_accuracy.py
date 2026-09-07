@@ -1,5 +1,5 @@
 import os
-os.environ["TF_USE_LEGACY_KERAS"] = "1"   # must be set before importing tensorflow
+os.environ["TF_USE_LEGACY_KERAS"] = "1"   # must be set before importing tensorflow — fixes KerasTensor error on TF 2.16+
 
 import re
 import gc
@@ -60,7 +60,7 @@ def main():
             result = DeepFace.analyze(
                 filepath,
                 actions=['age', 'gender'],
-                detector_backend='retinaface',
+                detector_backend='skip',   # images are already cropped/aligned faces — don't re-detect
                 enforce_detection=False
             )
             if isinstance(result, list):
@@ -73,6 +73,10 @@ def main():
             state["gender_total"] += 1
             if predicted_gender == true_gender:
                 state["gender_correct"] += 1
+
+            if i < 10:  # print first 10 for a quick sanity check
+                tqdm.write(f"{filename}: true_age={true_age}, pred_age={predicted_age}, "
+                           f"true_gender={true_gender}, pred_gender={predicted_gender}")
 
         except Exception as e:
             tqdm.write(f"Skipped {filename}: {e}")
