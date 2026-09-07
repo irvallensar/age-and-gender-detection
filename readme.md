@@ -33,7 +33,7 @@ pip install deepface opencv-python datasets tqdm tf-keras
 | File | Purpose |
 |---|---|
 | `main.py` | Live webcam app — detects faces and predicts age/gender in real time. Supports `--sync` for FPS benchmarking. |
-| `dowload_models.py` | Preloads DeepFace's Age/Gender/Facenet models before running `main.py` |
+| `download_models.py` | Preloads DeepFace's Age/Gender/Facenet models before running `main.py` |
 | `download_dataset.py` | One-time script to download the UTKFace dataset (via Hugging Face) for evaluation |
 | `evaluate_accuracy.py` | Runs the model against UTKFace and reports age MAE and gender accuracy. Supports `--limit` and `--detector` flags, and resumes from checkpoint if interrupted. |
 | `calibrate_age.py` | Fits and validates a post-hoc linear correction for the age model's systematic bias |
@@ -43,7 +43,7 @@ pip install deepface opencv-python datasets tqdm tf-keras
 ### 1. Preload the models (optional, but avoids a delay on first run)
 
 ```bash
-python dowload_models.py
+python download_models.py
 ```
 
 ### 2. Run the live detector
