@@ -4,6 +4,7 @@ os.environ["TF_USE_LEGACY_KERAS"] = "1"   # must be set before importing tensorf
 import re
 import gc
 import json
+import random
 import argparse
 import tensorflow as tf
 from deepface import DeepFace
@@ -37,6 +38,8 @@ def main():
 
     all_files = sorted(os.listdir(DATASET_DIR))
     if args.limit:
+        random.seed(42)  # fixed seed — reproducible sample, but no longer biased toward "100_..." filenames
+        random.shuffle(all_files)
         all_files = all_files[:args.limit]
 
     remaining = [f for f in all_files if f not in processed_set]
