@@ -1,4 +1,6 @@
 import os
+os.environ["TF_USE_LEGACY_KERAS"] = "1"   # must be set before importing tensorflow
+
 import re
 import gc
 import json
