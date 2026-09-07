@@ -11,19 +11,18 @@ from deepface import DeepFace
 from tqdm import tqdm
 
 DATASET_DIR = "utkface_data"          # folder of UTKFace images
-CHECKPOINT_FILE = "eval_checkpoint.json"  # incremental results, safe to resume from
 CLEAR_SESSION_EVERY = 500              # frees TF/Keras graph state periodically
 
 
-def load_checkpoint():
-    if os.path.exists(CHECKPOINT_FILE):
-        with open(CHECKPOINT_FILE, "r") as f:
+def load_checkpoint(checkpoint_file):
+    if os.path.exists(checkpoint_file):
+        with open(checkpoint_file, "r") as f:
             return json.load(f)
     return {"processed": [], "age_errors": [], "gender_correct": 0, "gender_total": 0}
 
 
-def save_checkpoint(state):
-    with open(CHECKPOINT_FILE, "w") as f:
+def save_checkpoint(state, checkpoint_file):
+    with open(checkpoint_file, "w") as f:
         json.dump(state, f)
 
 
@@ -31,9 +30,14 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--limit", type=int, default=None,
                          help="Only evaluate this many images (for a quick test run before committing to the full dataset)")
+    parser.add_argument("--detector", type=str, default="skip",
+                         help="DeepFace detector_backend to use, e.g. 'skip', 'retinaface', 'mtcnn', 'ssd'")
     args = parser.parse_args()
 
-    state = load_checkpoint()
+    # separate checkpoint per detector backend — prevents mixing results from different configs
+    checkpoint_file = f"eval_checkpoint_{args.detector}.json"
+
+    state = load_checkpoint(checkpoint_file)
     processed_set = set(state["processed"])
 
     all_files = sorted(os.listdir(DATASET_DIR))
@@ -63,7 +67,7 @@ def main():
             result = DeepFace.analyze(
                 filepath,
                 actions=['age', 'gender'],
-                detector_backend='skip',   # images are already cropped/aligned faces — don't re-detect
+                detector_backend=args.detector,
                 enforce_detection=False
             )
             if isinstance(result, list):
@@ -91,9 +95,9 @@ def main():
         if (i + 1) % CLEAR_SESSION_EVERY == 0:
             tf.keras.backend.clear_session()
             gc.collect()
-            save_checkpoint(state)  # checkpoint so a crash/interrupt doesn't lose progress
+            save_checkpoint(state, checkpoint_file)  # checkpoint so a crash/interrupt doesn't lose progress
 
-    save_checkpoint(state)
+    save_checkpoint(state, checkpoint_file)
 
     if state["age_errors"]:
         mae = sum(state["age_errors"]) / len(state["age_errors"])
