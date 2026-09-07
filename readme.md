@@ -30,7 +30,7 @@ pip install deepface opencv-python datasets
 | File | Purpose |
 |---|---|
 | `main.py` | Live webcam app — detects faces and predicts age/gender in real time |
-| `dowload_models.py` | Preloads DeepFace's Age/Gender/Facenet models before running `main.py` |
+| `download_models.py` | Preloads DeepFace's Age/Gender/Facenet models before running `main.py` |
 | `download_dataset.py` | One-time script to download the UTKFace dataset (via Hugging Face) for evaluation |
 | `evaluate_accuracy.py` | Runs the model against UTKFace and reports age MAE and gender accuracy |
 
@@ -39,7 +39,7 @@ pip install deepface opencv-python datasets
 ### 1. Preload the models (optional, but avoids a delay on first run)
 
 ```bash
-python dowload_models.py
+python download_models.py
 ```
 
 ### 2. Run the live detector
