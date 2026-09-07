@@ -18,7 +18,7 @@ def load_checkpoint(checkpoint_file):
     if os.path.exists(checkpoint_file):
         with open(checkpoint_file, "r") as f:
             return json.load(f)
-    return {"processed": [], "age_errors": [], "gender_correct": 0, "gender_total": 0}
+    return {"processed": [], "pairs": [], "gender_correct": 0, "gender_total": 0}
 
 
 def save_checkpoint(state, checkpoint_file):
@@ -76,7 +76,8 @@ def main():
             predicted_age = result['age']
             predicted_gender = result['dominant_gender']
 
-            state["age_errors"].append(abs(predicted_age - true_age))
+            state["pairs"].append({"true_age": true_age, "pred_age": predicted_age,
+                                    "true_gender": true_gender, "pred_gender": predicted_gender})
             state["gender_total"] += 1
             if predicted_gender == true_gender:
                 state["gender_correct"] += 1
@@ -99,9 +100,9 @@ def main():
 
     save_checkpoint(state, checkpoint_file)
 
-    if state["age_errors"]:
-        mae = sum(state["age_errors"]) / len(state["age_errors"])
-        print(f"\nAge MAE: {mae:.2f} years over {len(state['age_errors'])} images")
+    if state["pairs"]:
+        mae = sum(abs(p["pred_age"] - p["true_age"]) for p in state["pairs"]) / len(state["pairs"])
+        print(f"\nAge MAE: {mae:.2f} years over {len(state['pairs'])} images")
     else:
         print("\nNo age results collected.")
 
